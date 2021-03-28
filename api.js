@@ -3,11 +3,13 @@ const app = express();
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
+const serverless = require('serverless-http');
+const router = express.Router();
 
 app.use(bodyParser.json());
 app.use(cors());
 
-app.get(
+router.get(
   '/weather/:locationId',
   async (req, res, next) => {
     const url = `https://www.metaweather.com/api/location/${req.params.locationId}/`;
@@ -25,6 +27,10 @@ app.get(
   }
 );
 
-app.listen(1234, () => {
-  console.log('http://localhost:1234');
-});
+app.use('/.netlify/functions/server', router);
+
+// app.listen(1234, () => {
+//   console.log('http://localhost:1234');
+// });
+
+module.exports.handler = serverless(app);
